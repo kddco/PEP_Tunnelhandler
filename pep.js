@@ -17,16 +17,18 @@ app.use(session({
 }));
 
 app.get('/internaltoken', (req, res) => {
+  console.log(req.query);
     if(req.session.name && req.session.displayName) {
         // 如果 session 存在，則更新 token
         console.log("session update\n","name",req.session.name,"\n","displayName",req.session.displayName);
         req.session.touch();
+        res.send('更新session: displayName' + req.session.displayName);
     } else {
-      console.log("session create\n","name",req.session.name,"\n","displayName",req.session.displayName);
         // 如果 session 不存在，創建一個並賦予 token
         req.session.name = req.query.name;
         req.session.displayName = req.query.displayName;
-        res.send('Token 已創建:' + req.session.token);
+        console.log("session create\n","name",req.session.name,"\n","displayName",req.session.displayName);
+        res.send('Token 已創建: displayName' + req.session.displayName);
     }
 });
 
@@ -41,6 +43,6 @@ setInterval(function() {
     }
 }, 60000);
 
-app.listen(3000, () => {
+app.listen(port, () => {
     console.log('Server started on port ',port);
 });
