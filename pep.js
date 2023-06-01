@@ -2,20 +2,27 @@ const express = require('express');
 const app = express();
 
 const globalMap = new Map(); // 這是我們的全域 HashMap
+//設定時間單位為毫秒
 const expirationTime = 60000; // 過期時間設定為一分鐘
 const intervalTime = 30000; // 檢查間隔時間設定為三十秒
 
 app.get('/internaltoken', (req, res) => {
     const name = req.query.name; // 將 req.query.name 當作 HashMap 的 key
+    if(typeof name === 'undefined'|| name===null || name === undefined || name ===''  ){
+      res.status(400).send('Bad Request');
+      return;
+    }
     const timestamp = Date.now(); // 將目前時間轉換為時間戳
 
     if (globalMap.has(name)) {
         // 如果 name 已經存在於 HashMap 中，更新 timestamp
         globalMap.get(name).timestamp = timestamp;
+        console.log(`使用者 ${name} 的 timestamp 已更新`);
         res.send(`使用者 ${name} 的 timestamp 已更新`);
     } else {
         // 如果 name 不存在於 HashMap 中，創建新的 entry
         globalMap.set(name, {timestamp});
+        console.log(`使用者 ${name} 已存入`);
         res.send(`使用者 ${name} 已存入`);
     }
 });
