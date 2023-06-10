@@ -4,6 +4,7 @@ const app = express();
 const globalMap = new Map(); // 這是我們的全域 HashMap
 //設定時間單位為毫秒
 const expirationTime = 60000; // 過期時間設定為一分鐘
+// const expirationTime = 10000; // (測試用)過期時間設定為10秒
 const intervalTime = 30000; // 檢查間隔時間設定為三十秒
 
 app.get('/internaltoken', (req, res) => {
@@ -16,15 +17,47 @@ app.get('/internaltoken', (req, res) => {
 
     if (globalMap.has(name)) {
         // 如果 name 已經存在於 HashMap 中，更新 timestamp
-        globalMap.get(name).timestamp = timestamp;
+        current_sequence = globalMap.get(name).sequence;
+
+        globalMap.set(name, {
+            "timestamp":timestamp,
+            "sequence":current_sequence + 1    
+        });
+
+        console.log(globalMap.get(name));
+
+
         console.log(`使用者 ${name} 的 timestamp 已更新`);
         res.send(`使用者 ${name} 的 timestamp 已更新`);
     } else {
         // 如果 name 不存在於 HashMap 中，創建新的 entry
-        globalMap.set(name, {timestamp});
+        globalMap.set(name, {
+            "timestamp":timestamp,
+            "sequence":0      
+        });
+
+
+
+
         console.log(`使用者 ${name} 已存入`);
         res.send(`使用者 ${name} 已存入`);
     }
+});
+app.get('/getsequence', (req, res) => {
+    const name = req.query.name; 
+    if(typeof name === 'undefined'|| name===null || name === undefined || name ===''  ){
+        res.status(400).send('Bad Request');
+        return;
+    }
+    if (!globalMap.has(name)) {
+        res.status(400).send('Null username');
+        return;
+    }
+
+    console.log("/getsequence ：sequence是　"+ globalMap.get(name).sequence);
+    // res.status(400).send(globalMap.get(name).sequence);
+    res.send(globalMap.get(name).sequence.toString());
+
 });
 
 setInterval(() => {
