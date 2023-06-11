@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 
+const createTunnel = require('./createTunnel.js');
+
 const globalMap = new Map(); // 這是我們的全域 HashMap
 //設定時間單位為毫秒
 const expirationTime = 60000; // 過期時間設定為一分鐘
@@ -35,9 +37,8 @@ app.get('/internaltoken', (req, res) => {
             "timestamp":timestamp,
             "sequence":0      
         });
-
-
-
+        
+        createTunnel.run();
 
         console.log(`使用者 ${name} 已存入`);
         res.send(`使用者 ${name} 已存入`);
