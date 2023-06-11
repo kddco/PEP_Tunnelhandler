@@ -6,7 +6,6 @@ function run(){
 
     // 創建一個子進程來執行 'docker-compose up -d' 命令
     const child = spawn('docker-compose', ['-f','/home/kddc/second_SSH-tunnel/docker-compose.yml','up', '-d']);
-    const child = spawn('docker-compose', ['-f', '/home/root/123', 'up', '-d']);
 
     //(測試用)
     // const child = spawn('ping', ['8.8.8.8']);
