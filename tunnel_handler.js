@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 
 const createTunnel = require('./createTunnel.js');
-
+const shutdownTunnel = require('./shutdownTunnel.js');
 const globalMap = new Map(); // 這是我們的全域 HashMap
 //設定時間單位為毫秒
 const expirationTime = 60000; // 過期時間設定為一分鐘
@@ -68,6 +68,7 @@ setInterval(() => {
     for (let [name, data] of globalMap) {
         // 如果資料的 timestamp 加上過期時間小於目前時間，則刪除該筆資料
         if (data.timestamp + expirationTime < now) {
+            shutdownTunnel.run();
             globalMap.delete(name);
             console.log(`資料 ${name} 已過期並被刪除`);
         }
